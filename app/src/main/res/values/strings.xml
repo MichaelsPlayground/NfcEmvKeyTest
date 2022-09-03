@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">NfcEmvKeyTest</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_copy_tooltip">Copy all output to clipboard.</string>
+    <string name="clipboard_label">EMV Key Output</string>
+    <string name="action_copy_toast">Output copied to clipboard.</string>
+
+    <string name="tip_volume_keys">Tip: you can change the font size with the volume keys.</string>
+</resources>
