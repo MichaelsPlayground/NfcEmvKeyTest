@@ -23,7 +23,7 @@ public abstract class EmvPublicKey implements RSAPublicKey {
     static final String FORMAT_CA_MODULUS = "CA-Certificate-Public-Modulus";
     static final String HASH_ALGORITHM_SHA1 = "SHA-1";
 
-    //@Getter
+    @Getter
     @JsonSerialize(using = BigIntegerHexSerializer.class)
     @JsonDeserialize(using = BigIntegerHexDeserializer.class)
     private final BigInteger publicExponent;
@@ -33,7 +33,7 @@ public abstract class EmvPublicKey implements RSAPublicKey {
         return publicExponent;
     }
 
-    //@Getter
+    @Getter
     @JsonSerialize(using = BigIntegerHexSerializer.class)
     @JsonDeserialize(using = BigIntegerHexDeserializer.class)
     private final BigInteger modulus;
@@ -43,16 +43,16 @@ public abstract class EmvPublicKey implements RSAPublicKey {
         return modulus;
     }
 
-    //@Getter
+    @Getter
     @JsonIgnore
     private final byte[] encoded;
 
-    @Override
-    public byte[] getEncoded() {
-        return encoded;
-    }
+    //@Override
+    //public byte[] getEncoded() {
+    //    return encoded;
+    //}
 
-    //@Getter
+    @Getter
     private final Date expirationDate;
 
     /**

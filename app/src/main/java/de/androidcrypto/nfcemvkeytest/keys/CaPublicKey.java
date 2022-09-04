@@ -1,14 +1,15 @@
 package de.androidcrypto.nfcemvkeytest.keys;
 
-import de.androidcrypto.nfcemvkeytest.utils.EmvParsingException;
-import de.androidcrypto.nfcemvkeytest.utils.EmvUtils;
-import de.androidcrypto.nfcemvkeytest.utils.jackson.ByteArrayHexDeserializer;
-import de.androidcrypto.nfcemvkeytest.utils.jackson.ByteArrayHexSerializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import de.androidcrypto.nfcemvkeytest.utils.EmvParsingException;
+import de.androidcrypto.nfcemvkeytest.utils.EmvUtils;
+import de.androidcrypto.nfcemvkeytest.utils.jackson.ByteArrayHexDeserializer;
+import de.androidcrypto.nfcemvkeytest.utils.jackson.ByteArrayHexSerializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
@@ -52,7 +53,7 @@ public class CaPublicKey extends EmvPublicKey {
 
     @Override
     public byte[] getEncoded() {
-        return new byte[0];
+        return getEncoded();
     }
 
     @Getter
@@ -74,20 +75,7 @@ public class CaPublicKey extends EmvPublicKey {
     byte[] hash;
 
     @Override
-    public BigInteger getPublicExponent() {
-        return null;
-    }
-
-    @Override
     public BigInteger getModulus() {
-        return null;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public Date getExpirationDate() {
-        return null; // todo Change
+        return this.getModulus();
     }
 }

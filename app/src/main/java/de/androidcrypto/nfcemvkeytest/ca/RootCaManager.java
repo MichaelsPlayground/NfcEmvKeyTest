@@ -9,7 +9,7 @@ import de.androidcrypto.nfcemvkeytest.utils.EmvParsingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.devnied.bitlib.BytesUtils;
-import lombok.NonNull;
+//import lombok.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,9 +1,8 @@
 package de.androidcrypto.nfcemvkeytest;
 
+import static de.androidcrypto.nfcemvkeytest.utils.EmvUtils.notEmpty;
+
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -12,24 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.androidcrypto.nfcemvkeytest.ca.RootCa;
-import de.androidcrypto.nfcemvkeytest.ca.RootCaManager;
-import de.androidcrypto.nfcemvkeytest.keys.CaPublicKey;
-import de.androidcrypto.nfcemvkeytest.keys.EmvPublicKey;
-import de.androidcrypto.nfcemvkeytest.keys.IssuerIccPublicKey;
-import de.androidcrypto.nfcemvkeytest.keys.checks.ROCACheck;
-import de.androidcrypto.nfcemvkeytest.provider.Provider;
-import de.androidcrypto.nfcemvkeytest.keys.EmvKeyReader;
-import de.androidcrypto.nfcemvkeytest.utils.NFCUtils;
-import de.androidcrypto.nfcemvkeytest.utils.SimpleAsyncTask;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.github.devnied.emvnfccard.model.EmvCard;
 import com.github.devnied.emvnfccard.parser.EmvParser;
-import fr.devnied.bitlib.BytesUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -38,13 +28,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import static de.androidcrypto.nfcemvkeytest.utils.EmvUtils.notEmpty;
-
-import androidx.appcompat.app.AppCompatActivity;
+import de.androidcrypto.nfcemvkeytest.ca.RootCa;
+import de.androidcrypto.nfcemvkeytest.ca.RootCaManager;
+import de.androidcrypto.nfcemvkeytest.keys.CaPublicKey;
+import de.androidcrypto.nfcemvkeytest.keys.EmvKeyReader;
+import de.androidcrypto.nfcemvkeytest.keys.EmvPublicKey;
+import de.androidcrypto.nfcemvkeytest.keys.IssuerIccPublicKey;
+import de.androidcrypto.nfcemvkeytest.keys.checks.ROCACheck;
+import de.androidcrypto.nfcemvkeytest.provider.Provider;
+import de.androidcrypto.nfcemvkeytest.utils.NFCUtils;
+import de.androidcrypto.nfcemvkeytest.utils.SimpleAsyncTask;
+import fr.devnied.bitlib.BytesUtils;
 
 //import sasc.emv.CA;
 
 public class MainActivity extends AppCompatActivity {
+
+    // https://github.com/johnzweng/android-emv-key-test
 
     private static final String TAG = MainActivity.class.getName();
     private NFCUtils nfcUtils;

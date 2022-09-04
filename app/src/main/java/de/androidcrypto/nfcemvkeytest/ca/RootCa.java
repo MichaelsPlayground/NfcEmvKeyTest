@@ -19,25 +19,13 @@ public class RootCa {
     /**
      * Human readable name of card scheme (like "MASTERCARD" or "VISA")
      */
-    //@Getter
-    //@Setter
+    @Getter
+    @Setter
     private String cardSchemeName;
 
-    //@Getter
-    //@Setter
+    @Getter
+    @Setter
     private CaPublicKey[] caPublicKeys;
-
-    public void setCardSchemeName(String cardSchemeName) {
-        this.cardSchemeName = cardSchemeName;
-    }
-
-    public CaPublicKey[] getCaPublicKeys() {
-        return caPublicKeys;
-    }
-
-    public void setCaPublicKeys(CaPublicKey[] caPublicKeys) {
-        this.caPublicKeys = caPublicKeys;
-    }
 
     /**
      * Retrieve the public CA key with the given RID index. See public lists like:
