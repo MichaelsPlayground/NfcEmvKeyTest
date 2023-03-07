@@ -8,7 +8,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -43,21 +42,16 @@ import fr.devnied.bitlib.BytesUtils;
 
 //import sasc.emv.CA;
 
-public class MainActivity extends AppCompatActivity implements NfcAdapter.ReaderCallback {
+public class MainActivityOriginal extends AppCompatActivity {
 
     // https://github.com/johnzweng/android-emv-key-test
-    // this is a modified version using enableReaderMode
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = MainActivityOriginal.class.getName();
     private NFCUtils nfcUtils;
     private EmvCard mReadCard;
 
     private TextView statusText;
     private ScrollView scrollView;
-
-    final String TechIsoDep = "android.nfc.tech.IsoDep";
-    private NfcAdapter mNfcAdapter;
-    private EmvCard card;
 
     /**
      * IsoDep provider
@@ -70,15 +64,12 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
         super.onCreate(savedInstanceState);
         tipFlag = false;
         setContentView(R.layout.activity_main);
-        //nfcUtils = new NFCUtils(this);
+        nfcUtils = new NFCUtils(this);
         statusText = findViewById(R.id.statusText);
         scrollView = findViewById(R.id.scrollView);
         // init known Root CA's from XML file in resources
-
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
     }
 
-    /*
     @Override
     protected void onResume() {
         if (!NFCUtils.isNfcAvailable(this)) {
@@ -98,20 +89,17 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
         tipFlag = true;
         super.onResume();
     }
-    */
 
     private boolean randomlyTrueInXpercent(int xPercent) {
         return new Random().nextInt(100) < xPercent;
     }
 
 
-    /*
-        @Override
-        protected void onPause() {
-            super.onPause();
-            nfcUtils.disableDispatch();
-        }
-        */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        nfcUtils.disableDispatch();
+    }
 /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -223,100 +211,6 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
                     }
                 }
             }.execute();
-        }
-    }
-
-    // new method
-    /**
-     * section for NFC
-     */
-
-    /**
-     * This method is run in another thread when a card is discovered
-     * This method cannot cannot direct interact with the UI Thread
-     * Use `runOnUiThread` method to change the UI from this method
-     *
-     * @param tag discovered tag
-     */
-    @Override
-    public void onTagDiscovered(Tag tag) {
-        runOnUiThread(() -> {
-            //etLog.setText("");
-            //etData.setText("");
-            //aidSelectedForAnalyze = "";
-            //aidSelectedForAnalyzeName = "";
-        });
-        //playPing();
-        //writeToUiAppend(etLog, "NFC tag discovered");
-
-        //tagId = tag.getId();
-        //writeToUiAppend(etLog, "TagId: " + bytesToHex(tagId));
-        String[] techList = tag.getTechList();
-        //writeToUiAppend(etLog, "TechList found with these entries:");
-        /*
-        for (int i = 0; i < techList.length; i++) {
-            writeToUiAppend(etLog, techList[i]);
-        }
-
-         */
-        // the next steps depend on the TechList found on the device
-        for (int i = 0; i < techList.length; i++) {
-            String tech = techList[i];
-            //writeToUiAppend(etLog, "");
-            switch (tech) {
-                case TechIsoDep: {
-                    //writeToUiAppend(etLog, "*** Tech ***");
-                    //writeToUiAppend(etLog, "Technology IsoDep");
-                    readIsoDep(tag);
-                    break;
-                }
-                default: {
-                    // do nothing
-                    break;
-                }
-            }
-        }
-    }
-
-    private void readIsoDep(Tag tag) {
-        Log.i(TAG, "read a tag with IsoDep technology");
-        IsoDep nfc = null;
-        nfc = IsoDep.get(tag);
-        if (nfc != null) {
-            // init of the service methods
-            //TagValues tv = new TagValues();
-            //AidValues aidV = new AidValues();
-            //PdolUtil pu = new PdolUtil(nfc);
-
-            try {
-                mReadCard = null;
-                // Open connection
-                nfc.connect();
-                mProvider.setmTagCom(nfc);
-                EmvParser parser = new EmvParser(mProvider, true);
-                card = parser.readEmvCard();
-                if (card != null) onPostExecute();
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
-            } finally {
-                closeQuietly(nfc);
-            }
-        }
-    }
-
-    private void onPostExecute() {
-        log("Reading finished.");
-        if (card != null) {
-            if (StringUtils.isNotBlank(card.getCardNumber())) {
-                mReadCard = card;
-                printResults();
-            } else {
-                Log.w(TAG, "Reading finished, but cardNumber is null or empty..");
-                log("Sorry, couldn't parse the card data. Is this an EMV banking card?");
-            }
-        } else {
-            Log.w(TAG, "reading finished, no exception but card == null..");
-            log("Sorry, couldn't parse the card (card is null). Is this an EMV banking card?");
         }
     }
 
@@ -457,51 +351,6 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
         } catch (IOException ioe) {
             // ignore
         }
-    }
-
-    /**
-     * section for activity workflow - important is the disabling of the ReaderMode when activity is pausing
-     */
-
-    private void showWirelessSettings() {
-        Toast.makeText(this, "You need to enable NFC", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mNfcAdapter != null) {
-
-            if (!mNfcAdapter.isEnabled())
-                showWirelessSettings();
-
-            Bundle options = new Bundle();
-            // Work around for some broken Nfc firmware implementations that poll the card too fast
-            options.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 250);
-
-            // Enable ReaderMode for all types of card and disable platform sounds
-            // the option NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK is NOT set
-            // to get the data of the tag afer reading
-            mNfcAdapter.enableReaderMode(this,
-                    this,
-                    NfcAdapter.FLAG_READER_NFC_A |
-                            NfcAdapter.FLAG_READER_NFC_B |
-                            NfcAdapter.FLAG_READER_NFC_F |
-                            NfcAdapter.FLAG_READER_NFC_V |
-                            NfcAdapter.FLAG_READER_NFC_BARCODE |
-                            NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS,
-                    options);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mNfcAdapter != null)
-            mNfcAdapter.disableReaderMode(this);
     }
 
 }
